@@ -2,27 +2,38 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, Alert } from 'react-native';
 import { RectButton } from 'react-native-gesture-handler';
-
+import api from './src/api/api';
 
 
 export default function App() {
-
-  let userDefault = 'admin'
-  let passwordDefault = '1234'
 
   const [userSubmit, setuUserSubmit] = useState('')
   const [passwordSubmit, setPasswordSubmit] = useState('')
 
   function clickedButton() {
-    if (userDefault === userSubmit && passwordDefault === passwordSubmit) {
+
+    try {
+
+      api.get(`mobile_teste/?login=${userSubmit}&senha=${passwordSubmit}`).then(response => {
+        const { acesse } = response.data;
+
+        if (acesse === 'true' || acesse === true) {
+          Alert.alert(
+            ":)",
+            "Login feito com sucesso!"
+          )
+        }  else {
+          Alert.alert(
+            ";-;",
+            "Ops, usuário incorreto!"
+          )
+        }
+      })
+      
+    } catch (error) {
       Alert.alert(
-        ":)",
-        "Login feito com sucesso!"
-      )
-    } else {
-      Alert.alert(
-        ";-;",
-        "Ops, usuário incorreto!"
+        "ERRO",
+        "Não foi possivel conectar ao Banco de Dados!"
       )
     }
 
@@ -79,7 +90,8 @@ const styles = StyleSheet.create({
 
   input: {
     width: 200,
-    backgroundColor: '#555',
+    borderBottomWidth: 1,
+    borderBottomColor: '#8447FF',
     fontSize: 24,
     marginBottom: 40,
     textAlign: 'center',
